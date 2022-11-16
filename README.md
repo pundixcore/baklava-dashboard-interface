@@ -66,5 +66,3 @@ To modify the logo in the application, make changes in the `src/layout/Header.js
 ## Copyright and License
 
 Copyright © 2022 Bob's Programming Academy. Code released under the MIT license.
-
-#test
