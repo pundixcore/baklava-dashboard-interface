@@ -6,8 +6,8 @@ import CustomCard from "../CustomCard";
 
 // Font Awesome Icon
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faChartArea as ChartAreaIcon } from "@fortawesome/free-solid-svg-icons";
-library.add(ChartAreaIcon);
+import { faCoins as CoinsIcon } from "@fortawesome/free-solid-svg-icons";
+library.add(CoinsIcon);
 
 const Exchanges = () => {
   const theme = useTheme();
@@ -16,13 +16,20 @@ const Exchanges = () => {
 
   const fetchExchanges = () => {
     axios
-      .get("https://api.coingecko.com/api/v3/exchanges", {
-        headers: {
-          Accept: "application/json",
-        },
-      })
+      .get(
+        "https://ap-southeast-1.aws.data.mongodb-api.com/app/baklava-psozi/endpoint/baklava",
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      )
       .then((response) => {
-        setExchanges(response.data);
+        let filteredResponse =
+          response.data["AllData"]["stable_coin_reserve"]["USDC"][
+            "0xD2c6e7892F3131e22d05E37E9B22bA79f8C74bA0"
+          ];
+        setExchanges(filteredResponse);
       })
       .catch((error) => console.log(error));
   };
@@ -33,10 +40,10 @@ const Exchanges = () => {
 
   return (
     <CustomCard
-      text="EXCHANGES"
-      value={exchanges.length}
+      text="USDC [USB Swap Locker Contract]"
+      value={"$" + exchanges.toString()}
       color={theme.palette.success.dark}
-      icon={ChartAreaIcon}
+      icon={CoinsIcon}
     />
   );
 };

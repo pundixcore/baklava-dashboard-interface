@@ -6,8 +6,8 @@ import CustomCard from "../CustomCard";
 
 // Font Awesome Icon
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faChartPie as ChartPieIcon } from "@fortawesome/free-solid-svg-icons";
-library.add(ChartPieIcon);
+import { faCoins as CoinsIcon } from "@fortawesome/free-solid-svg-icons";
+library.add(CoinsIcon);
 
 const AssetPlatforms = () => {
   const theme = useTheme();
@@ -16,13 +16,20 @@ const AssetPlatforms = () => {
 
   const fetchAssetPlatforms = () => {
     axios
-      .get("https://api.coingecko.com/api/v3/asset_platforms", {
-        headers: {
-          Accept: "application/json",
-        },
-      })
+      .get(
+        "https://ap-southeast-1.aws.data.mongodb-api.com/app/baklava-psozi/endpoint/baklava",
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      )
       .then((response) => {
-        setAssetPlatforms(response.data);
+        let filteredResponse =
+          response.data["AllData"]["stable_coin_reserve"]["USDC.e"][
+            "0x1578D79ab9777f8f1B9A5fE8abd593835492f21A"
+          ];
+        setAssetPlatforms(filteredResponse);
       })
       .catch((error) => console.log(error));
   };
@@ -33,10 +40,10 @@ const AssetPlatforms = () => {
 
   return (
     <CustomCard
-      text="ASSET PLATFORMS"
-      value={assetPlatforms.length}
+      text="USDC.e [USB Liquidity Pool Contract]"
+      value={"$" + assetPlatforms.toString()}
       color={theme.palette.warning.dark}
-      icon={ChartPieIcon}
+      icon={CoinsIcon}
     />
   );
 };

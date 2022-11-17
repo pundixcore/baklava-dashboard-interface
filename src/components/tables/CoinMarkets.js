@@ -13,7 +13,7 @@ import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import SvgIcon from "@mui/material/SvgIcon";
-import { useTheme } from "@mui/material/styles";
+import { keyframes, useTheme } from "@mui/material/styles";
 
 import TablePaginationActions from "./TablePaginationActions";
 
@@ -23,15 +23,18 @@ const CoinMarkets = () => {
   const [coins, setCoins] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChange = (e) => {
     setSearch(e.target.value);
   };
 
-  const filteredCoins = coins.filter((coin) =>
-    coin.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredCoins = Object.entries(coins); // turns into a list
+  //const filteredCoins = ((key) => (coins[key] ? coins[key] : []))(search);
+
+  // const filteredCoins = coins.filter((coin) =>
+  //   coin.name.toLowerCase().includes(search.toLowerCase())
+  // ); // Issei
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -40,7 +43,8 @@ const CoinMarkets = () => {
   const fetchCoinMarkets = () => {
     axios
       .get(
-        "https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page=250&page=1&sparkline=false",
+        "https://ap-southeast-1.aws.data.mongodb-api.com/app/baklava-psozi/endpoint/baklava",
+        //"https://api.coingecko.com/api/v3/coins/markets?vs_currency=USD&order=market_cap_desc&per_page=250&page=1&sparkline=false", //Issei
         {
           headers: {
             Accept: "application/json",
@@ -48,14 +52,45 @@ const CoinMarkets = () => {
         }
       )
       .then((response) => {
-        setCoins(response.data);
+        let responseData = response.data["AllData"]["stable_coin_distribution"];
+        console.log(responseData);
+        delete responseData._id;
+        console.log(responseData);
+        console.log(Object.entries(responseData));
+        setCoins(responseData);
+        //setCoins(response.data["AllData"]["stable_coin_distribution"]);
+        //console.log("Success:", responseData);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(1);
+        console.log(error);
+      });
   };
+
+  //let c = [["aaa", [["2012-11-11", 100], ["2012-11-12", 33]]], ["ccc", [["2012-11-11", 100], ["2012-11-12", 33]]]]
+  function HelperFunctionOne({ array, metaData }) {
+    const addressTokenMap = {
+      "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664": "USDC.e",
+      "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "USDC",
+    };
+
+    return array.map((tempArr) => {
+      return (
+        <TableRow>
+          <TableCell>{addressTokenMap[metaData]}</TableCell>
+          <TableCell>{metaData}</TableCell>
+          <TableCell>{tempArr[0]}</TableCell>
+          <TableCell>{tempArr[1]}</TableCell>
+        </TableRow>
+      );
+    });
+  }
 
   useEffect(() => {
     fetchCoinMarkets();
   }, []);
+
+  console.log("filteredCoins:", filteredCoins);
 
   return (
     <React.Fragment>
@@ -100,6 +135,18 @@ const CoinMarkets = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
+                {filteredCoins.map((arr) => {
+                  let smartContractAddress = arr[0];
+                  return (
+                    <HelperFunctionOne
+                      array={arr[1]}
+                      metaData={smartContractAddress}
+                    />
+                  );
+                })}
+              </TableBody>
+              {/* <TableBody>
+                
                 {(rowsPerPage > 0
                   ? filteredCoins.slice(
                       page * rowsPerPage,
@@ -147,7 +194,7 @@ const CoinMarkets = () => {
                     <TableCell>${coin.market_cap.toLocaleString()}</TableCell>
                   </TableRow>
                 ))}
-              </TableBody>
+              </TableBody> */}
             </Table>
             <TablePagination
               rowsPerPageOptions={[]}

@@ -6,8 +6,8 @@ import CustomCard from "../CustomCard";
 
 // Font Awesome Icon
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faChartColumn as ChartColumnIcon } from "@fortawesome/free-solid-svg-icons";
-library.add(ChartColumnIcon);
+import { faCoins as CoinsIcon } from "@fortawesome/free-solid-svg-icons";
+library.add(CoinsIcon);
 
 const MarketIndexes = () => {
   const theme = useTheme();
@@ -16,13 +16,20 @@ const MarketIndexes = () => {
 
   const fetchIndexes = () => {
     axios
-      .get("https://api.coingecko.com/api/v3/indexes", {
-        headers: {
-          Accept: "application/json",
-        },
-      })
+      .get(
+        "https://ap-southeast-1.aws.data.mongodb-api.com/app/baklava-psozi/endpoint/baklava",
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      )
       .then((response) => {
-        setIndexes(response.data);
+        let filteredResponse =
+          response.data["AllData"]["stable_coin_reserve"]["USDC.e"][
+            "0xD2c6e7892F3131e22d05E37E9B22bA79f8C74bA0"
+          ];
+        setIndexes(filteredResponse);
       })
       .catch((error) => console.log(error));
   };
@@ -33,10 +40,10 @@ const MarketIndexes = () => {
 
   return (
     <CustomCard
-      text="MARKET INDEXES"
-      value={indexes.length}
+      text="USDC.e [USB Swap Locker Contract]"
+      value={"$" + indexes.toString()}
       color={theme.palette.primary.main}
-      icon={ChartColumnIcon}
+      icon={CoinsIcon}
     />
   );
 };

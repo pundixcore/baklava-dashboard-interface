@@ -16,13 +16,20 @@ const Categories = () => {
 
   const fetchCategories = () => {
     axios
-      .get("https://api.coingecko.com/api/v3/coins/categories/list", {
-        headers: {
-          Accept: "application/json",
-        },
-      })
+      .get(
+        "https://ap-southeast-1.aws.data.mongodb-api.com/app/baklava-psozi/endpoint/baklava",
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      )
       .then((response) => {
-        setCategories(response.data);
+        let filteredResponse =
+          response.data["AllData"]["stable_coin_reserve"]["USDC"][
+            "0x1578D79ab9777f8f1B9A5fE8abd593835492f21A"
+          ];
+        setCategories(filteredResponse);
       })
       .catch((error) => console.log(error));
   };
@@ -33,8 +40,8 @@ const Categories = () => {
 
   return (
     <CustomCard
-      text="CATEGORIES"
-      value={categories.length}
+      text="USDC [USB Liquidity Pool Contract]"
+      value={"$" + categories.toString()}
       color={theme.palette.error.dark}
       icon={CoinsIcon}
     />

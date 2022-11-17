@@ -16,7 +16,7 @@ const CustomCard = ({ text, value, color, icon }) => {
         <Grid container spacing={3} sx={{ justifyContent: "space-between" }}>
           <Grid item>
             <Typography
-              variant="h6"
+              variant="h7"
               color={theme.palette.text.secondary}
               gutterBottom
             >
