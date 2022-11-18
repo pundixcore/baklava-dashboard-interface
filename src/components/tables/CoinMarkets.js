@@ -14,14 +14,14 @@ import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import SvgIcon from "@mui/material/SvgIcon";
 import { keyframes, useTheme } from "@mui/material/styles";
-
+// import BasicTabs from "../Tabs";
 import TablePaginationActions from "./TablePaginationActions";
 
-const CoinMarkets = () => {
+const CoinMarkets = ({ index }) => {
   const theme = useTheme();
 
   const [coins, setCoins] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -32,20 +32,18 @@ const CoinMarkets = () => {
   //const filteredCoins = Object.entries(coins); // turns into a list
   //const filteredCoins = ((key) => (coins[key] ? coins[key] : []))(search);
 
-  const filteredCoins = (function (searchString) {
-    if (searchString === "") {
+  const filteredCoins = (function (search) {
+    if (search == 0) {
       return Object.entries(coins);
     }
     const addressTokenMap = {
-      "usdc.e": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
-      usdc: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+      2: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+      1: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
     };
-    const address = addressTokenMap[searchString]
-      ? addressTokenMap[searchString]
-      : "";
+    const address = addressTokenMap[search] ? addressTokenMap[search] : "";
 
     return coins[address] ? [[address, coins[address]]] : [];
-  })(search.toLowerCase());
+  })(index);
 
   // const filteredCoins = coins.filter((coin) =>
   //   coin.name.toLowerCase().includes(search.toLowerCase())
@@ -105,7 +103,7 @@ const CoinMarkets = () => {
 
   return (
     <React.Fragment>
-      <Box>
+      {/* <Box>
         <Box sx={{ mt: 3 }}>
           <Card>
             <CardContent>
@@ -129,8 +127,11 @@ const CoinMarkets = () => {
             </CardContent>
           </Card>
         </Box>
-      </Box>
+      </Box> */}
       <Box sx={{ pt: 3 }}>
+        {/* <Card>
+          <BasicTabs />
+        </Card> */}
         <Card>
           <Box sx={{ minWidth: 1050, pb: 3 }}>
             <Table style={{ tableLayout: "fixed" }}>

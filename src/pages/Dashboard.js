@@ -20,6 +20,7 @@ import PolarAreaChart from "../components/charts/PolarAreaChart";
 import LineChart from "../components/charts/LineChart";
 import AreaChart from "../components/charts/AreaChart";
 import Spacer from "../components/Spacer";
+import BasicTabs from "../components/Tabs";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -39,35 +40,30 @@ const Dashboard = () => {
         <Container maxWidth={false}>
           <Grid container spacing={3}>
             <DashboardHeader />
-
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <Categories />
             </Grid>
-
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <Exchanges />
             </Grid>
-
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <AssetPlatforms />
             </Grid>
-
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <MarketIndexes />
             </Grid>
-
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <USDCeTotal />
             </Grid>
-
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <USDCTotal />
             </Grid>
-
             <Grid item xs={12}>
-              <CoinMarkets />
+              <BasicTabs />
             </Grid>
-
+            {/* <Grid item xs={12}>
+              <CoinMarkets />
+            </Grid> */}
             {/* <Grid item xs={12}>
               <BarChart />
             </Grid>

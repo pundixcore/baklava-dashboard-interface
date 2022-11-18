@@ -7,7 +7,6 @@ import CustomCard from "../CustomCard";
 // Font Awesome Icon
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCoins as CoinsIcon } from "@fortawesome/free-solid-svg-icons";
-import { faCoins as CoinsIcon } from "@fortawesome/free-solid-svg-icons";
 library.add(CoinsIcon);
 
 const USDCeTotal = () => {
