@@ -10,8 +10,6 @@ import Categories from "../components/statistics/Categories";
 import Exchanges from "../components/statistics/Exchanges";
 import AssetPlatforms from "../components/statistics/AssetPlatforms";
 import MarketIndexes from "../components/statistics/MarketIndexes";
-import USDCTotal from "../components/statistics/USDCeTotal";
-import USDCeTotal from "../components/statistics/USDCTotal";
 import CoinMarkets from "../components/tables/CoinMarkets";
 import BarChart from "../components/charts/BarChart";
 import PieChart from "../components/charts/PieChart";
@@ -21,7 +19,7 @@ import LineChart from "../components/charts/LineChart";
 import AreaChart from "../components/charts/AreaChart";
 import Spacer from "../components/Spacer";
 
-const Dashboard = () => {
+const OtherDashboard = () => {
   const theme = useTheme();
 
   return (
@@ -56,19 +54,11 @@ const Dashboard = () => {
               <MarketIndexes />
             </Grid>
 
-            <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <USDCeTotal />
-            </Grid>
-
-            <Grid item lg={3} sm={6} xl={3} xs={12}>
-              <USDCTotal />
-            </Grid>
-
             <Grid item xs={12}>
               <CoinMarkets />
             </Grid>
 
-            {/* <Grid item xs={12}>
+            <Grid item xs={12}>
               <BarChart />
             </Grid>
 
@@ -88,7 +78,7 @@ const Dashboard = () => {
 
             <Grid item xs={12}>
               <AreaChart />
-            </Grid> */}
+            </Grid>
           </Grid>
         </Container>
       </Box>
@@ -97,4 +87,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default OtherDashboard;

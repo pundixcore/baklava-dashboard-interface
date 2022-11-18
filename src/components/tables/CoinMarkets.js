@@ -29,8 +29,23 @@ const CoinMarkets = () => {
     setSearch(e.target.value);
   };
 
-  const filteredCoins = Object.entries(coins); // turns into a list
+  //const filteredCoins = Object.entries(coins); // turns into a list
   //const filteredCoins = ((key) => (coins[key] ? coins[key] : []))(search);
+
+  const filteredCoins = (function (searchString) {
+    if (searchString === "") {
+      return Object.entries(coins);
+    }
+    const addressTokenMap = {
+      "usdc.e": "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+      usdc: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+    };
+    const address = addressTokenMap[searchString]
+      ? addressTokenMap[searchString]
+      : "";
+
+    return coins[address] ? [[address, coins[address]]] : [];
+  })(search.toLowerCase());
 
   // const filteredCoins = coins.filter((coin) =>
   //   coin.name.toLowerCase().includes(search.toLowerCase())
@@ -53,10 +68,7 @@ const CoinMarkets = () => {
       )
       .then((response) => {
         let responseData = response.data["AllData"]["stable_coin_distribution"];
-        console.log(responseData);
         delete responseData._id;
-        console.log(responseData);
-        console.log(Object.entries(responseData));
         setCoins(responseData);
         //setCoins(response.data["AllData"]["stable_coin_distribution"]);
         //console.log("Success:", responseData);
@@ -78,9 +90,8 @@ const CoinMarkets = () => {
       return (
         <TableRow>
           <TableCell>{addressTokenMap[metaData]}</TableCell>
-          <TableCell>{metaData}</TableCell>
           <TableCell>{tempArr[0]}</TableCell>
-          <TableCell>{tempArr[1]}</TableCell>
+          <TableCell>{tempArr[1] / 10 ** 6}</TableCell>
         </TableRow>
       );
     });
@@ -122,16 +133,16 @@ const CoinMarkets = () => {
       <Box sx={{ pt: 3 }}>
         <Card>
           <Box sx={{ minWidth: 1050, pb: 3 }}>
-            <Table>
+            <Table style={{ tableLayout: "fixed" }}>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>Image</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Name</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Symbol</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>24h</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Volume</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Market Cap</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>Token</TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Date Amount Due
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Amount Due in $USD
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -196,7 +207,7 @@ const CoinMarkets = () => {
                 ))}
               </TableBody> */}
             </Table>
-            <TablePagination
+            {/* <TablePagination
               rowsPerPageOptions={[]}
               colSpan={3}
               count={coins.length}
@@ -205,7 +216,7 @@ const CoinMarkets = () => {
               onPageChange={handleChangePage}
               ActionsComponent={TablePaginationActions}
               sx={{ display: "flex", justifyContent: "center" }}
-            />
+            /> */}
           </Box>
         </Card>
       </Box>
