@@ -115,7 +115,7 @@ const Header = ({ onSidebarOpen }) => {
                     },
                   }}
                 >
-                  Baklava Dashboard
+                  Cryptocurrency Dashboard
                 </Typography>
               </IconButton>
             </Box>
@@ -134,6 +134,7 @@ const Header = ({ onSidebarOpen }) => {
                             text='About'
                         />
                         <CustomButton 
+                        
                             href='#'
                             icon={<EmailIcon />}
                             text='Contact'
