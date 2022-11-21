@@ -14,8 +14,12 @@ import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
 import SvgIcon from "@mui/material/SvgIcon";
 import { keyframes, useTheme } from "@mui/material/styles";
-// import BasicTabs from "../Tabs";
 import TablePaginationActions from "./TablePaginationActions";
+import BasicDatePicker from "../BasicDatePicker";
+import moment from "moment";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const CoinMarkets = ({ index }) => {
   const theme = useTheme();
@@ -24,6 +28,8 @@ const CoinMarkets = ({ index }) => {
   const [search, setSearch] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [value, setValue] = useState("");
+  const [originalData, setOriginalData] = useState("");
 
   const handleChange = (e) => {
     setSearch(e.target.value);
@@ -32,18 +38,79 @@ const CoinMarkets = ({ index }) => {
   //const filteredCoins = Object.entries(coins); // turns into a list
   //const filteredCoins = ((key) => (coins[key] ? coins[key] : []))(search);
 
-  const filteredCoins = (function (search) {
-    if (search == 0) {
-      return Object.entries(coins);
-    }
+  const dataFilter = (search) => {
     const addressTokenMap = {
       2: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
       1: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
     };
+
     const address = addressTokenMap[search] ? addressTokenMap[search] : "";
 
-    return coins[address] ? [[address, coins[address]]] : [];
-  })(index);
+    if (search === 0) {
+      if (value === "") {
+        return Object.entries(coins);
+      } else {
+        const valueFormmatted = moment(value["$d"]).format("YYYY-MM-DD");
+        console.log("originalData: issei", originalData);
+        const USDC =
+          originalData["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"][
+            valueFormmatted
+          ];
+        const USDC_e =
+          originalData["0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664"][
+            valueFormmatted
+          ];
+        console.log("issei kumagai", USDC, USDC_e);
+
+        return Object.entries(coins);
+      }
+    }
+
+    if (value === "") {
+      return coins[address] ? [[address, coins[address]]] : [];
+    } else {
+      console.log(value["$d"]);
+      console.log(value["$d"].toLocaleDateString());
+      console.log(moment(value["$d"]).format("YYYY-MM-DD"));
+      return coins[address] ? [[address, coins[address]]] : [];
+    }
+    //["ccc", [["2012-11-11", 100], ["2012-11-12", 33]]]
+  };
+
+  const amountDue = (date) => {
+    const USDC =
+      originalData["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"][date];
+    const USDC_e =
+      originalData["0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664"][date];
+    let usdcData;
+    let usdceData;
+    if (USDC !== undefined) {
+    } else {
+    }
+    if (USDC_e !== undefined) {
+    } else {
+    }
+  };
+
+  const filteredCoins = dataFilter(index);
+
+  // const filteredCoins = (function (search) {
+  //   if (search === 0) {
+  //     return Object.entries(coins);
+  //   }
+  //   const addressTokenMap = {
+  //     2: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+  //     1: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+  //   };
+  //   const address = addressTokenMap[search] ? addressTokenMap[search] : "";
+
+  //   if (value === "") {
+  //     return coins[address] ? [[address, coins[address]]] : [];
+  //   } else {
+  //     console.log(value["$d"].toISOString().split("T")[0]);
+  //     return coins[address] ? [[address, coins[address]]] : [];
+  //   }
+  // })(index);
 
   // const filteredCoins = coins.filter((coin) =>
   //   coin.name.toLowerCase().includes(search.toLowerCase())
@@ -66,10 +133,17 @@ const CoinMarkets = ({ index }) => {
       )
       .then((response) => {
         let responseData = response.data["AllData"]["stable_coin_distribution"];
+        let responseDataOriginal =
+          response.data["AllData"]["stable_coin_distribution"]["original"];
+        console.log("responseData", responseData);
+        console.log("responseDataOriginal", responseDataOriginal);
         delete responseData._id;
+
+        setOriginalData(responseDataOriginal);
+        //setOriginalData(originalData);
+        delete responseData.original;
+        console.log("responseData", responseData);
         setCoins(responseData);
-        //setCoins(response.data["AllData"]["stable_coin_distribution"]);
-        //console.log("Success:", responseData);
       })
       .catch((error) => {
         console.log(1);
@@ -99,7 +173,14 @@ const CoinMarkets = ({ index }) => {
     fetchCoinMarkets();
   }, []);
 
+  console.log("originalData:", originalData);
+
   console.log("filteredCoins:", filteredCoins);
+  const a = value["$d"];
+  console.log(a instanceof Date);
+  //console.log(a.toISOString().split("T")[0]);
+  //const x = JSON.stringify(value["$d"]);
+  console.log("hello");
 
   return (
     <React.Fragment>
@@ -128,6 +209,19 @@ const CoinMarkets = ({ index }) => {
           </Card>
         </Box>
       </Box> */}
+      <Box>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Date"
+            value={value}
+            onChange={(newValue) => {
+              setValue(newValue);
+              console.log(dataFilter(index));
+            }}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
+      </Box>
       <Box sx={{ pt: 3 }}>
         {/* <Card>
           <BasicTabs />
