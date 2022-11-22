@@ -27,7 +27,24 @@ const CustomCard = ({ text, value, color, icon }) => {
             </Typography>
           </Grid>
           <Grid item>
-            <Avatar
+            {["USDC.e Total", "USDC Total"].includes(text) ? (
+              <Avatar
+                sx={{
+                  backgroundColor: color,
+                  height: 56,
+                  width: 56,
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={icon}
+                  size="lg"
+                  color={theme.palette.common.white}
+                />
+              </Avatar>
+            ) : (
+              <></>
+            )}
+            {/* <Avatar
               sx={{
                 backgroundColor: color,
                 height: 56,
@@ -39,7 +56,7 @@ const CustomCard = ({ text, value, color, icon }) => {
                 size="lg"
                 color={theme.palette.common.white}
               />
-            </Avatar>
+            </Avatar> */}
           </Grid>
         </Grid>
       </CardContent>

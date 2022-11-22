@@ -40,6 +40,12 @@ const Dashboard = () => {
         <Container maxWidth={false}>
           <Grid container spacing={3}>
             <DashboardHeader />
+            <Grid item lg={20} sm={6} xl={3} xs={12}>
+              <USDCeTotal />
+            </Grid>
+            <Grid item lg={20} sm={6} xl={3} xs={12}>
+              <USDCTotal />
+            </Grid>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <Categories />
             </Grid>
@@ -52,12 +58,12 @@ const Dashboard = () => {
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <MarketIndexes />
             </Grid>
-            <Grid item lg={3} sm={6} xl={3} xs={12}>
+            {/* <Grid item lg={3} sm={6} xl={3} xs={12}>
               <USDCeTotal />
             </Grid>
             <Grid item lg={3} sm={6} xl={3} xs={12}>
               <USDCTotal />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <BasicTabs />
             </Grid>

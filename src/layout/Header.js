@@ -207,7 +207,7 @@ const Header = ({ onSidebarOpen }) => {
                   color={theme.palette.text.primary}
                   variant="subtitle2"
                 >
-                  Bob
+                  Issei
                 </Typography>
                 <Typography
                   color={theme.palette.text.secondary}
