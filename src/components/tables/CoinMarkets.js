@@ -23,13 +23,24 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 const CoinMarkets = ({ index }) => {
   const theme = useTheme();
-
-  const [coins, setCoins] = useState([]);
+  const [coins, setCoins] = useState({});
   const [search, setSearch] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [value, setValue] = useState("");
-  const [originalData, setOriginalData] = useState("");
+  const [originalData, setOriginalData] = useState({});
+  const addressTokenMap = {
+    "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664": "USDC.e",
+    "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "USDC",
+  };
+  const indexToTokenAddressMap = {
+    2: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+    1: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+  };
+
+  const address = indexToTokenAddressMap[index]
+    ? indexToTokenAddressMap[index]
+    : ""; // if address === "", this means all tokens
 
   const handleChange = (e) => {
     setSearch(e.target.value);
@@ -38,83 +49,53 @@ const CoinMarkets = ({ index }) => {
   //const filteredCoins = Object.entries(coins); // turns into a list
   //const filteredCoins = ((key) => (coins[key] ? coins[key] : []))(search);
 
-  const dataFilter = (search) => {
-    const addressTokenMap = {
-      2: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
-      1: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
-    };
-
-    const address = addressTokenMap[search] ? addressTokenMap[search] : "";
-
-    if (search === 0) {
-      if (value === "") {
+  const dataFilter = () => {
+    if (value === "" || value === null || value === undefined) {
+      if (index === 0) {
         return Object.entries(coins);
       } else {
-        const valueFormmatted = moment(value["$d"]).format("YYYY-MM-DD");
-        console.log("originalData: issei", originalData);
-        const USDC =
-          originalData["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"][
-            valueFormmatted
-          ];
-        const USDC_e =
-          originalData["0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664"][
-            valueFormmatted
-          ];
-        console.log("issei kumagai", USDC, USDC_e);
-
-        return Object.entries(coins);
+        return coins[address] ? [[address, coins[address]]] : [];
       }
-    }
-
-    if (value === "") {
-      return coins[address] ? [[address, coins[address]]] : [];
     } else {
-      console.log(value["$d"]);
-      console.log(value["$d"].toLocaleDateString());
-      console.log(moment(value["$d"]).format("YYYY-MM-DD"));
-      return coins[address] ? [[address, coins[address]]] : [];
+      const dateFormmatted = moment(value["$d"]).format("YYYY-MM-DD");
+      return amountDue(dateFormmatted);
     }
     //["ccc", [["2012-11-11", 100], ["2012-11-12", 33]]]
   };
 
   const amountDue = (date) => {
     const USDC =
-      originalData["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"][date];
-    const USDC_e =
-      originalData["0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664"][date];
+      originalData?.["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"]?.[date];
+    const USDCe =
+      originalData?.["0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664"]?.[date];
+
     let usdcData;
     let usdceData;
+
     if (USDC !== undefined) {
-    } else {
+      console.log("issei address", address);
+      usdcData = ["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E", [[date, USDC]]];
     }
-    if (USDC_e !== undefined) {
+
+    if (USDCe !== undefined) {
+      usdceData = [
+        "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
+        [[date, USDCe]],
+      ];
+    }
+
+    if (usdcData !== undefined && usdceData !== undefined && index === 0) {
+      return [usdcData, usdceData];
+    } else if (usdcData !== undefined && index === 1) {
+      return [usdcData];
+    } else if (usdceData !== undefined && index === 2) {
+      return [usdceData];
     } else {
+      return [];
     }
   };
 
-  const filteredCoins = dataFilter(index);
-
-  // const filteredCoins = (function (search) {
-  //   if (search === 0) {
-  //     return Object.entries(coins);
-  //   }
-  //   const addressTokenMap = {
-  //     2: "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664",
-  //     1: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
-  //   };
-  //   const address = addressTokenMap[search] ? addressTokenMap[search] : "";
-
-  //   if (value === "") {
-  //     return coins[address] ? [[address, coins[address]]] : [];
-  //   } else {
-  //     console.log(value["$d"].toISOString().split("T")[0]);
-  //     return coins[address] ? [[address, coins[address]]] : [];
-  //   }
-  // })(index);
-
-  // const filteredCoins = coins.filter((coin) =>
-  //   coin.name.toLowerCase().includes(search.toLowerCase())
-  // ); // Issei
+  let filteredCoins = dataFilter();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -132,18 +113,24 @@ const CoinMarkets = ({ index }) => {
         }
       )
       .then((response) => {
-        let responseData = response.data["AllData"]["stable_coin_distribution"];
-        let responseDataOriginal =
-          response.data["AllData"]["stable_coin_distribution"]["original"];
+        let responseData =
+          response.data?.["AllData"]?.["stable_coin_distribution"];
+        let responseDataOriginal = responseData?.["original"];
+
         console.log("responseData", responseData);
         console.log("responseDataOriginal", responseDataOriginal);
-        delete responseData._id;
 
-        setOriginalData(responseDataOriginal);
-        //setOriginalData(originalData);
-        delete responseData.original;
+        delete responseData?._id;
+        if (responseDataOriginal !== undefined) {
+          setOriginalData(responseDataOriginal);
+        }
+
+        delete responseData?.original;
         console.log("responseData", responseData);
-        setCoins(responseData);
+
+        if (responseData !== undefined) {
+          setCoins(responseData);
+        }
       })
       .catch((error) => {
         console.log(1);
@@ -153,11 +140,6 @@ const CoinMarkets = ({ index }) => {
 
   //let c = [["aaa", [["2012-11-11", 100], ["2012-11-12", 33]]], ["ccc", [["2012-11-11", 100], ["2012-11-12", 33]]]]
   function HelperFunctionOne({ array, metaData }) {
-    const addressTokenMap = {
-      "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664": "USDC.e",
-      "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "USDC",
-    };
-
     return array.map((tempArr) => {
       return (
         <TableRow>
@@ -173,14 +155,9 @@ const CoinMarkets = ({ index }) => {
     fetchCoinMarkets();
   }, []);
 
-  console.log("originalData:", originalData);
-
-  console.log("filteredCoins:", filteredCoins);
-  const a = value["$d"];
-  console.log(a instanceof Date);
-  //console.log(a.toISOString().split("T")[0]);
-  //const x = JSON.stringify(value["$d"]);
-  console.log("hello");
+  useEffect(() => {
+    filteredCoins = dataFilter();
+  }, [value]);
 
   return (
     <React.Fragment>
@@ -216,6 +193,7 @@ const CoinMarkets = ({ index }) => {
             value={value}
             onChange={(newValue) => {
               setValue(newValue);
+
               console.log(dataFilter(index));
             }}
             renderInput={(params) => <TextField {...params} />}
@@ -243,6 +221,7 @@ const CoinMarkets = ({ index }) => {
               <TableBody>
                 {filteredCoins.map((arr) => {
                   let smartContractAddress = arr[0];
+                  console.log(filteredCoins);
                   return (
                     <HelperFunctionOne
                       array={arr[1]}

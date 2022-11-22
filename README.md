@@ -1,14 +1,6 @@
-# Cryptocurrency Dashboard
+# Baklava Dashboard
 
-This is a cryptocurrency dashboard app built using **React 17**, **Material UI 5** and **Chart.js 3**. The app uses the **CoinGecko API** to get cryptocurrency data such as live prices, trading volume, exchange volumes, historical data, crypto categories, images, and more.
-
-### Dark mode:
-
-![plot](https://github.com/BobsProgrammingAcademy/Cryptocurrency-Dashboard/blob/main/public/dark_mode.png?raw=true)
-
-### Light mode:
-
-![plot](https://github.com/BobsProgrammingAcademy/Cryptocurrency-Dashboard/blob/main/public/light_mode.png?raw=true)
+This is a cryptocurrency dashboard app built using **React 17**, **Material UI 5** and **Chart.js 3**.
 
 ## Table of Contents
 
@@ -62,7 +54,3 @@ To modify the fonts in the application, first, add a new font to the `public/ind
 ### Changing Logo
 
 To modify the logo in the application, make changes in the `src/layout/Header.js` and `src/layout/Sidebar.js` files.
-
-## Copyright and License
-
-Copyright © 2022 Bob's Programming Academy. Code released under the MIT license.
