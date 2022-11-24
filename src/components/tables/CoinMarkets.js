@@ -95,6 +95,21 @@ const CoinMarkets = ({ index }) => {
     }
   };
 
+  const getCurrentDate = () => {
+    const datetimenow = new Date();
+    const datetimenowanother = moment(datetimenow).format("YYYY-MM-DD");
+    console.log(datetimenowanother);
+    return datetimenowanother;
+  };
+
+  const daysDifference = (date_1, date_2) => {
+    let date_one = new Date(date_1);
+    let date_two = new Date(date_2);
+    let difference = date_one.getTime() - date_two.getTime();
+    let TotalDays = Math.ceil(difference / (1000 * 3600 * 24));
+    return TotalDays;
+  };
+
   let filteredCoins = dataFilter();
 
   const handleChangePage = (event, newPage) => {
@@ -145,7 +160,9 @@ const CoinMarkets = ({ index }) => {
         <TableRow>
           <TableCell>{addressTokenMap[metaData]}</TableCell>
           <TableCell>{tempArr[0]}</TableCell>
+          <TableCell>{daysDifference(tempArr[0], getCurrentDate())}</TableCell>
           <TableCell>{tempArr[1] / 10 ** 6}</TableCell>
+          <TableCell>{tempArr[2] / 10 ** 6}</TableCell>
         </TableRow>
       );
     });
@@ -214,7 +231,13 @@ const CoinMarkets = ({ index }) => {
                     Date Amount Due
                   </TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>
+                    Days until Due Date
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
                     Amount Due in $USD
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    Accumulative Sum in $USD
                   </TableCell>
                 </TableRow>
               </TableHead>

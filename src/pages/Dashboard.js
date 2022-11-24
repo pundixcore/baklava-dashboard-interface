@@ -38,7 +38,7 @@ const Dashboard = () => {
         }}
       >
         <Container maxWidth={false}>
-          <Grid container spacing={3}>
+          <Grid container spacing={1}>
             <DashboardHeader />
             <Grid item lg={20} sm={6} xl={3} xs={12}>
               <USDCeTotal />
