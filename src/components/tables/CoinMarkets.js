@@ -29,6 +29,7 @@ const CoinMarkets = ({ index }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [value, setValue] = useState("");
   const [originalData, setOriginalData] = useState({});
+  const [accumulativeData, setAccumulativeData] = useState({});
   const addressTokenMap = {
     "0xA7D7079b0FEaD91F3e65f86E8915Cb59c1a4C664": "USDC.e",
     "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E": "USDC",
@@ -84,7 +85,7 @@ const CoinMarkets = ({ index }) => {
       ];
     }
 
-    if (usdcData !== undefined && usdceData !== undefined && index === 0) {
+    if ((usdcData !== undefined || usdceData !== undefined) && index === 0) {
       return [usdcData, usdceData];
     } else if (usdcData !== undefined && index === 1) {
       return [usdcData];
@@ -131,17 +132,25 @@ const CoinMarkets = ({ index }) => {
         let responseData =
           response.data?.["AllData"]?.["stable_coin_distribution"];
         let responseDataOriginal = responseData?.["original"];
+        let responseDataAccumulative = responseData?.["accumulative"];
 
+        console.log("responseDataAccumulative", responseDataAccumulative);
         console.log("responseData", responseData);
         console.log("responseDataOriginal", responseDataOriginal);
 
         delete responseData?._id;
+
         if (responseDataOriginal !== undefined) {
           setOriginalData(responseDataOriginal);
         }
 
         delete responseData?.original;
-        console.log("responseData", responseData);
+
+        if (responseDataAccumulative !== undefined) {
+          setAccumulativeData(responseDataAccumulative);
+        }
+
+        delete responseData?.accumulative;
 
         if (responseData !== undefined) {
           setCoins(responseData);
@@ -156,13 +165,18 @@ const CoinMarkets = ({ index }) => {
   //let c = [["aaa", [["2012-11-11", 100], ["2012-11-12", 33]]], ["ccc", [["2012-11-11", 100], ["2012-11-12", 33]]]]
   function HelperFunctionOne({ array, metaData }) {
     return array.map((tempArr) => {
+      console.log("metaData", metaData);
+      console.log("mapping data", tempArr);
+      console.log("accumulativeData Issei", accumulativeData);
       return (
         <TableRow>
-          <TableCell>{addressTokenMap[metaData]}</TableCell>
+          <TableCell>{addressTokenMap?.[metaData]}</TableCell>
           <TableCell>{tempArr[0]}</TableCell>
           <TableCell>{daysDifference(tempArr[0], getCurrentDate())}</TableCell>
           <TableCell>{tempArr[1] / 10 ** 6}</TableCell>
-          <TableCell>{tempArr[2] / 10 ** 6}</TableCell>
+          <TableCell>
+            {accumulativeData?.[metaData]?.[tempArr[0]] / 10 ** 6}
+          </TableCell>
         </TableRow>
       );
     });
@@ -175,6 +189,10 @@ const CoinMarkets = ({ index }) => {
   useEffect(() => {
     filteredCoins = dataFilter();
   }, [value]);
+
+  console.log("filteredCoins-ik", filteredCoins);
+
+  console.log("accumulativeData-IK", accumulativeData);
 
   return (
     <React.Fragment>
@@ -210,7 +228,6 @@ const CoinMarkets = ({ index }) => {
             value={value}
             onChange={(newValue) => {
               setValue(newValue);
-
               console.log(dataFilter(index));
             }}
             renderInput={(params) => <TextField {...params} />}
@@ -243,14 +260,18 @@ const CoinMarkets = ({ index }) => {
               </TableHead>
               <TableBody>
                 {filteredCoins.map((arr) => {
-                  let smartContractAddress = arr[0];
-                  console.log(filteredCoins);
-                  return (
-                    <HelperFunctionOne
-                      array={arr[1]}
-                      metaData={smartContractAddress}
-                    />
-                  );
+                  if (arr !== undefined) {
+                    let smartContractAddress = arr[0];
+                    console.log(filteredCoins);
+                    return (
+                      <HelperFunctionOne
+                        array={arr[1]}
+                        metaData={smartContractAddress}
+                      />
+                    );
+                  } else {
+                    return <></>;
+                  }
                 })}
               </TableBody>
               {/* <TableBody>
