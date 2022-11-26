@@ -20,8 +20,14 @@ import moment from "moment";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { useSelector } from "react-redux";
 
 const CoinMarkets = ({ index }) => {
+  const usdcTotal = useSelector((state) => state.stableCoin.USDC);
+  const usdceTotal = useSelector((state) => state.stableCoin.USDCe);
+
+  console.log("fetchIndexesData-exported variable", usdcTotal, usdceTotal);
+
   const theme = useTheme();
   const [coins, setCoins] = useState({});
   const [search, setSearch] = useState(0);
@@ -168,15 +174,20 @@ const CoinMarkets = ({ index }) => {
       console.log("metaData", metaData);
       console.log("mapping data", tempArr);
       console.log("accumulativeData Issei", accumulativeData);
+      const accumulativeSum =
+        accumulativeData?.[metaData]?.[tempArr[0]] / 10 ** 6;
       return (
         <TableRow>
           <TableCell>{addressTokenMap?.[metaData]}</TableCell>
           <TableCell>{tempArr[0]}</TableCell>
           <TableCell>{daysDifference(tempArr[0], getCurrentDate())}</TableCell>
           <TableCell>{tempArr[1] / 10 ** 6}</TableCell>
-          <TableCell>
-            {accumulativeData?.[metaData]?.[tempArr[0]] / 10 ** 6}
-          </TableCell>
+          <TableCell>{accumulativeSum}</TableCell>
+          {addressTokenMap?.[metaData] === "USDC.e" ? (
+            <TableCell>{usdceTotal - accumulativeSum}</TableCell>
+          ) : (
+            <TableCell>{usdcTotal - accumulativeSum}</TableCell>
+          )}
         </TableRow>
       );
     });
@@ -255,6 +266,9 @@ const CoinMarkets = ({ index }) => {
                   </TableCell>
                   <TableCell sx={{ fontWeight: "bold" }}>
                     Accumulative Sum in $USD
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: "bold" }}>
+                    USDC Remaining
                   </TableCell>
                 </TableRow>
               </TableHead>
